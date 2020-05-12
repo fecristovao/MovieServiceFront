@@ -64,7 +64,7 @@
 
 <script>
 import {mapState, mapMutations, mapActions, mapGetters} from 'vuex'
-import { getServices } from '../store/movies/actions'
+
 export default {
 data () {
     return {

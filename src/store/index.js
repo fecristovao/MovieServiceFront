@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 // import example from './module-example'
 
 import movies from './movies'
+import torrent from './torrent'
 
 Vue.use(Vuex)
 
@@ -19,7 +20,8 @@ Vue.use(Vuex)
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
-      movies
+      movies,
+      torrent
     },
 
     // enable strict mode (adds overhead!)

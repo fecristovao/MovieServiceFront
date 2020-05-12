@@ -67,7 +67,7 @@ export default {
         {
           title: 'Torrents',
           icon: 'cloud_download',
-          link: 'https://github.com/quasarframework'
+          link: '/torrents'
         }
       ]
     }
