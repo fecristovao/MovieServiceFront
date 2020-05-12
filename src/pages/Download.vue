@@ -1,14 +1,14 @@
 <template>
   <q-page padding>
     <div class="row text-center q-gutter-y-lg">
-      <div class="col-12" padding v-for="download in downloadLinks" :key="movie">
+      <div class="col-12" padding v-for="download, i in downloadLinks" :key="movie">
         <q-card>
           <q-card-section>
-            <div class="text-h6">{{ download.Qualidade }}</div>
+            <div class="text-h6">{{ download.Title }}</div>
           </q-card-section>
           <q-separator/>
           <q-card-actions>
-            <q-btn label="Download" color="dark" class="full-width" push />
+            <q-btn label="Download" color="dark" class="full-width" @click="startDownload(i)" />
           </q-card-actions>
         </q-card>
       </div>
@@ -26,20 +26,39 @@ export default {
     }
   },
   computed: {
-    ...mapState('movies', ['foundMovies'])
+    ...mapState('movies', ['foundMovies']),
+    getMovie() {
+      return this.foundMovies[this.$route.params.serviceID].Movies[this.$route.params.itemID]
+    },
+    serviceName() {
+      return this.foundMovies[this.$route.params.serviceID].Service
+    }
   },
   methods: {
-    getMovieByID(serviceID, itemID) {
-      return this.foundMovies[serviceID].Movies[i]
+    startDownload(id) {
+      var vm = this
+      axios.post("http://127.0.0.1:8888/api/addMagnetLink", {Link: vm.downloadLinks[id].MagnetLink}).then(response => {
+        vm.showNotif("Download Iniciado", "blue")
+    }).catch(() => {
+        vm.showNotif("Error ao iniciar download", "red")
+    }).finally(() => {
+        this.$q.loading.hide()
+        console.log(vm.downloadLinks)
+    })
+    },
+    showNotif(message, color) {
+      this.$q.notify({
+        message: message,
+        color: color
+      })
     }
   },
   mounted() {
-    var movie = this.getMovieByID(this.$route.params.id)
     var vm = this
     this.$q.loading.show({
-  delay: 400 // ms
-})
-    axios.post("http://192.168.0.9:8090/megatorrents/download/", {link: movie.Link}).then(response => {
+      delay: 400 // ms
+    })
+    axios.post("http://127.0.0.1:8888/api/getMagnetLinks", {Service: this.serviceName, Movie: this.getMovie}).then(response => {
         vm.downloadLinks = response.data
     }).finally(() => {
         this.$q.loading.hide()

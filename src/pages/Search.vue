@@ -56,6 +56,9 @@
         </div>
       </div>
     </template>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-btn fab  icon="keyboard_arrow_up" direction="up" @click="scrollTop()"/>
+    </q-page-sticky>
   </q-page>
 </template>
 
@@ -84,6 +87,9 @@ data () {
   methods: {
     ...mapMutations('movies', ['setServices', 'setMovies']),
     ...mapActions('movies', ['searchMovies', 'getServices', 'selectAll']),
+    scrollTop() {
+      window.scrollTo(0, 0)
+    }
   },
   async mounted() {
       await this.getServices()
