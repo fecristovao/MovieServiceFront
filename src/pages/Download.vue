@@ -43,7 +43,6 @@ export default {
         vm.showNotif("Error ao iniciar download", "red")
     }).finally(() => {
         this.$q.loading.hide()
-        console.log(vm.downloadLinks)
     })
     },
     showNotif(message, color) {

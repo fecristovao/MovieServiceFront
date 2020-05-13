@@ -1,8 +1,21 @@
 <template>
   <q-page padding>
-    <q-page-container>
+    <q-dialog v-model="confirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="delete" color="primary" text-color="white" />
+          <span class="q-ml-sm">Are you sure to delete <b>{{ confirmTorrent != null ? confirmTorrent.Name : "" }} </b>?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn flat label="Delete" color="primary" v-close-popup @click="promptConfirm()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <div>
         <q-list bordered separator v-show="torrentList">
-          <q-item v-for="torrent in torrentList" :key="torrent.ID">
+          <q-item class="row" v-for="torrent in torrentList" :key="torrent.ID">
             <q-item-section avatar>
               <q-btn flat class="full-height" @click="(torrent.Status == 'Downloading' || torrent.Status == 'Idle') ? pauseTorrent(torrent.ID) : resumeTorrent(torrent.ID)">
                 <q-icon color="primary" :name="(torrent.Status == 'Downloading' || torrent.Status == 'Idle') ? 'pause_circle_filled' : 'play_circle_filled'" />
@@ -15,14 +28,21 @@
                 <q-linear-progress :value="doneProgress(torrent)" class="q-mt-md" />
               </div>
             </q-item-section>
-            <q-item-section side>
-              <q-btn class="full-height" flat @click="deleteTorrent(torrent.ID)">
+            <q-item-section side >
+              <q-btn class="full-height full-width" flat @click="setConfirm(torrent)">
                 <q-icon color="red" name="delete"/>
               </q-btn>
             </q-item-section>
           </q-item>
         </q-list>
-    </q-page-container>
+        <q-page-sticky position="bottom-right" :offset="[18, 18]">
+          <q-btn fab  icon="keyboard_arrow_up" color="blue" direction="up" @click="scrollTop()"/>
+      </q-page-sticky>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
   </q-page>
 </template>
 
@@ -33,6 +53,8 @@ export default {
   // name: 'PageName',
   data() {
     return {
+      confirm: false,
+      confirmTorrent: null
     }
   },
   computed: {
@@ -48,11 +70,23 @@ export default {
       setInterval(() => {
         this.getTorrentList()
       }, interval);
+    },
+    setConfirm(torrent) {
+      this.confirmTorrent = torrent
+      this.confirm = true
+    },
+    promptConfirm() {
+      this.deleteTorrent(this.confirmTorrent.ID)
+      this.confirm = false
+      this.confirmTorrent = null
+    },
+    scrollTop() {
+      window.scrollTo(0, 0)
     }
   },
   mounted() {
     this.getTorrentList()
-    this.startTimer(60000)
+    //this.startTimer(60000)
   }
 }
 </script>
