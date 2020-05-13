@@ -86,7 +86,7 @@ export default {
   },
   mounted() {
     this.getTorrentList()
-    //this.startTimer(60000)
+    this.startTimer(60000)
   }
 }
 </script>
