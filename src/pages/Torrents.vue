@@ -22,10 +22,15 @@
               </q-btn>
             </q-item-section>
             <q-item-section>
-              <div class="row">{{ torrent.Name }}</div>
+              <div class="row text-bold">{{ torrent.Name }}</div>
+              <div class="row">{{ torrent.Status }} - {{torrent.Downloaded}}</div>
+              <br />
+              <div class="row">Down: {{torrent.Down}} kbp/s</div>
+              <div class="row">Up: {{torrent.Up}} kbp/s</div>
               <div class="row">
-                {{ torrent.Status }}
+                
                 <q-linear-progress :value="doneProgress(torrent)" class="q-mt-md" />
+                {{ torrent.Done }}
               </div>
             </q-item-section>
             <q-item-section side >
@@ -54,20 +59,22 @@ export default {
   data() {
     return {
       confirm: false,
-      confirmTorrent: null
+      confirmTorrent: null,
+      timer: null
     }
   },
   computed: {
     ...mapState('torrent', ['torrentList']),
   },
   methods: {
-    ...mapActions('torrent', ['getTorrentList', 'deleteTorrent', 'pauseTorrent', 'resumeTorrent']),
+    ...mapActions('torrent', ['getTorrentList', 'deleteTorrent', 'pauseTorrent', 'resumeTorrent', 'setIntervalRefresh']),
+    ...mapMutations('torrent', ['destroyTimer']),
     doneProgress(torrent) {
       return parseFloat(torrent.Done.replace("%", ""))/100
     },
     startTimer(interval) {
       var vm = this
-      setInterval(() => {
+      this.timer = setInterval(() => {
         this.getTorrentList()
       }, interval);
     },
@@ -86,7 +93,13 @@ export default {
   },
   mounted() {
     this.getTorrentList()
-    this.startTimer(60000)
+    this.setIntervalRefresh(2000)
+    
+  },
+  beforeDestroy(){
+    this.destroyTimer()
+    console.log(this.timer)
   }
+  
 }
 </script>

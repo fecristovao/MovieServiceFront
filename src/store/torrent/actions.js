@@ -28,7 +28,6 @@ export const pauseTorrent = ({commit, dispatch, state}, id) => {
     Loading.show()
     return axios.get(process.env.API+"api/pauseTorrent/"+ id).then(response => {
     }).finally(() => {
-        
         dispatch('getTorrentList')
         Loading.hide()  
     })
@@ -37,9 +36,24 @@ export const pauseTorrent = ({commit, dispatch, state}, id) => {
 export const resumeTorrent = ({commit, dispatch, state}, id) => {
     Loading.show()
     return axios.get(process.env.API+"api/resumeTorrent/"+ id).then(response => {
-    }).finally(() => {
-         
+    }).finally(() => {       
         dispatch('getTorrentList')
         Loading.hide() 
     })
 }
+
+export const setIntervalRefresh = ({commit, dispatch, state}, interval) => {
+    if (state.timerRefresh == null) {
+        var newInterval = setInterval(() => {
+            dispatch('getTorrentList')   
+        }, interval);
+        commit('createTimer', newInterval)
+    } else {
+        commit('destroyTimer')
+        var newInterval = setInterval(({dispatch}) => {
+            dispatch('getTorrentList')   
+        }, interval);
+        commit('createTimer', newInterval)
+    }
+}
+
