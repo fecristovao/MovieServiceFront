@@ -27,7 +27,7 @@
           </div>
         </div>
     </div>
-    
+    <q-page-container>
     <template v-for="item, j in foundMovies">
       <br />
       <q-separator spaced />
@@ -57,8 +57,10 @@
       </div>
     </template>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn fab  icon="keyboard_arrow_up" direction="up" @click="scrollTop()"/>
+      <q-btn fab  icon="keyboard_arrow_up" color="blue" direction="up" @click="scrollTop()"/>
     </q-page-sticky>
+    </q-page-container>
+    
   </q-page>
 </template>
 
@@ -74,7 +76,6 @@ data () {
   computed: {
     services: {
       get () {
-        console.log(this.$store.state.services)
         return this.$store.state.movies.services
       },
       set (value) {

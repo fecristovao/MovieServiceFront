@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <div class="row text-center q-gutter-y-lg">
-      <div class="col-12" padding v-for="download, i in downloadLinks" :key="movie">
+      <div class="col-12" padding v-for="download, i in downloadLinks" :key="i">
         <q-card>
           <q-card-section>
             <div class="text-h6">{{ download.Title }}</div>
@@ -37,7 +37,7 @@ export default {
   methods: {
     startDownload(id) {
       var vm = this
-      axios.post("http://127.0.0.1:8888/api/addMagnetLink", {Link: vm.downloadLinks[id].MagnetLink}).then(response => {
+      axios.post(process.env.API+"api/addMagnetLink", {Link: vm.downloadLinks[id].MagnetLink}).then(response => {
         vm.showNotif("Download Iniciado", "blue")
     }).catch(() => {
         vm.showNotif("Error ao iniciar download", "red")
@@ -58,7 +58,7 @@ export default {
     this.$q.loading.show({
       delay: 400 // ms
     })
-    axios.post("http://127.0.0.1:8888/api/getMagnetLinks", {Service: this.serviceName, Movie: this.getMovie}).then(response => {
+    axios.post(process.env.API+"api/getMagnetLinks", {Service: this.serviceName, Movie: this.getMovie}).then(response => {
         vm.downloadLinks = response.data
     }).finally(() => {
         this.$q.loading.hide()

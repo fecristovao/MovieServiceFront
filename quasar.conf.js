@@ -6,7 +6,8 @@
 // Configuration for your app
 // https://quasar.dev/quasar-cli/quasar-conf-js
 
-module.exports = function (/* ctx */) {
+module.exports = function (ctx) {
+  console.log(ctx)
     return {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
@@ -67,6 +68,13 @@ module.exports = function (/* ctx */) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
+      env: ctx.dev
+    ? { // so on dev we'll have
+      API: JSON.stringify('http://192.168.0.9:8888/')
+    }
+    : { // and on build (production):
+      API: JSON.stringify('/')
+    },
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
       // rtl: false, // https://quasar.dev/options/rtl-support
@@ -81,6 +89,7 @@ module.exports = function (/* ctx */) {
       // https://quasar.dev/quasar-cli/cli-documentation/handling-webpack
       extendWebpack (cfg) {
       },
+      
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer

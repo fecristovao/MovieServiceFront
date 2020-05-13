@@ -1,16 +1,28 @@
 <template>
   <q-page padding>
-    <div class="container">
-      <div class="row">
-        <div class="col-1" v-for="column in columns">{{ column.label }}</div>
-      </div>
-      <div class="row gutter-lg" v-for="torrent in torrentList" :key="torrent">
-        <div :class="(j == 8) ? 'col-3' : 'col-1'" v-for="key,i,j  in torrent" :key=key>{{ key }}</div>
-        <div class='col-1'>
-          <q-btn label="Delete" push class="full-width" @click="deleteTorrent(torrent.ID)"/>
-        </div>
-      </div>
-    </div>
+    <q-page-container>
+        <q-list bordered separator v-show="torrentList">
+          <q-item v-for="torrent in torrentList" :key="torrent.ID">
+            <q-item-section avatar>
+              <q-btn flat class="full-height" @click="(torrent.Status == 'Downloading' || torrent.Status == 'Idle') ? pauseTorrent(torrent.ID) : resumeTorrent(torrent.ID)">
+                <q-icon color="primary" :name="(torrent.Status == 'Downloading' || torrent.Status == 'Idle') ? 'pause_circle_filled' : 'play_circle_filled'" />
+              </q-btn>
+            </q-item-section>
+            <q-item-section>
+              <div class="row">{{ torrent.Name }}</div>
+              <div class="row">
+                {{ torrent.Status }}
+                <q-linear-progress :value="doneProgress(torrent)" class="q-mt-md" />
+              </div>
+            </q-item-section>
+            <q-item-section side>
+              <q-btn class="full-height" flat @click="deleteTorrent(torrent.ID)">
+                <q-icon color="red" name="delete"/>
+              </q-btn>
+            </q-item-section>
+          </q-item>
+        </q-list>
+    </q-page-container>
   </q-page>
 </template>
 
@@ -21,27 +33,26 @@ export default {
   // name: 'PageName',
   data() {
     return {
-       columns: [
-        { name: 'id', align: 'center', label: 'ID', field: 'ID', sortable: true },
-        { name: 'complete', label: 'Complete (%)', field: 'Done', sortable: true , align: 'center'},
-        { name: 'downloaded', label: 'Downloaded', field: 'Downloaded' , align: 'center'},
-        { name: 'ETA', label: 'ETA', field: 'ETA' , align: 'center'},
-        { name: 'Up', label: 'Up', field: 'Up' , align: 'center', align: 'center'},
-        { name: 'Down', label: 'Down', field: 'Down', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) , align: 'center'},
-        { name: 'Ratio', label: 'Ratio (%)', field: 'Ratio', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) , align: 'center'},
-        { name: 'Name', label: 'Status', field: 'Status' , align: 'center'},
-        { name: 'Name', label: 'Name', field: 'Name' , align: 'center'},
-      ],
     }
   },
   computed: {
     ...mapState('torrent', ['torrentList']),
   },
   methods: {
-    ...mapActions('torrent', ['getTorrentList', 'deleteTorrent']),
+    ...mapActions('torrent', ['getTorrentList', 'deleteTorrent', 'pauseTorrent', 'resumeTorrent']),
+    doneProgress(torrent) {
+      return parseFloat(torrent.Done.replace("%", ""))/100
+    },
+    startTimer(interval) {
+      var vm = this
+      setInterval(() => {
+        this.getTorrentList()
+      }, interval);
+    }
   },
   mounted() {
     this.getTorrentList()
+    this.startTimer(60000)
   }
 }
 </script>

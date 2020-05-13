@@ -9,7 +9,7 @@ import {
 
 export const searchMovies = ({commit, state}, term) => {
     Loading.show()
-    return axios.post("http://127.0.0.1:8888/api/searchMovie", {Services: state.services, movieName: term}).then(response => {
+    return axios.post(process.env.API+"api/searchMovie", {Services: state.services, movieName: term}).then(response => {
         commit('setMovies', response.data)
     }).finally(() => {
         Loading.hide()
@@ -18,7 +18,7 @@ export const searchMovies = ({commit, state}, term) => {
 
 export const getServices = ({commit, dispatch, state}) => {
     Loading.show()
-    return axios.get("http://127.0.0.1:8888/api/listservices").then(response => {
+    return axios.get(process.env.API+"api/listservices").then(response => {
         commit('setAvailableServices', response.data)
     }).finally(() => {
         Loading.hide()

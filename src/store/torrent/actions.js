@@ -10,19 +10,36 @@ import {
   } from 'quasar'
 
 export const getTorrentList = ({commit}) => {
-    Loading.show()
-    return axios.get("http://127.0.0.1:8888/api/listTorrents").then(response => {
+    return axios.get(process.env.API+"api/listTorrents").then(response => {
         commit('setTorrentList', response.data)
-    }).finally(() => {
-        Loading.hide()
     })
 }
 
 export const deleteTorrent = ({commit, dispatch, state}, id) => {
     Loading.show()
-    return axios.get("http://127.0.0.1:8888/api/deleteTorrent/"+ id).then(response => {
+    return axios.get(process.env.API+"api/deleteTorrent/"+ id).then(response => {
     }).finally(() => {
-        Loading.hide()  
         dispatch('getTorrentList')
+        Loading.hide()
+    })
+}
+
+export const pauseTorrent = ({commit, dispatch, state}, id) => {
+    Loading.show()
+    return axios.get(process.env.API+"api/pauseTorrent/"+ id).then(response => {
+    }).finally(() => {
+        
+        dispatch('getTorrentList')
+        Loading.hide()  
+    })
+}
+
+export const resumeTorrent = ({commit, dispatch, state}, id) => {
+    Loading.show()
+    return axios.get(process.env.API+"api/resumeTorrent/"+ id).then(response => {
+    }).finally(() => {
+         
+        dispatch('getTorrentList')
+        Loading.hide() 
     })
 }
